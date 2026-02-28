@@ -66,10 +66,40 @@ class virtual_machine {
 
     }
 
+    execute_instruction(opcode, operand_one, operand_two) {
+
+        if (opcode = "mov") {
+
+            if (operand_two[0] == '#') {
+
+                operand_two = Number(operand_two.slice(1))
+
+            }
+
+            else if (operand_two[0] == 'R') {
+
+                operand_two = this.registers[operand_two]
+
+            }
+
+            else if (operand_two[0] == 'R') {
+
+                operand_two = this.global_memory[operand_two]
+
+            }
+
+            this.registers[operand_one] = operand_two
+
+        }
+
+
+    }
 
 }
 
 var a = new virtual_machine(10000)
-console.log(a.global_memory)
+a.global_memory[100] = 1
+a.execute_instruction('mov', 'R1', '#1')
+a.execute_instruction('mov', 'R2', 'R1')
+a.execute_instruction('mov', 'R3', 100)
 console.log(a.registers)
-console.log(a.opcodes)
