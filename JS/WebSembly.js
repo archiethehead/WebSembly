@@ -1,28 +1,12 @@
 // Memory
 
-class memory {
-
-    constructor(new_value) {
-
-        this.value = new_value
-
-    }
-
-    set_value(new_value) {
-
-        this.value = new_value
-
-    }
-
-}
-
 function construct_global_memory(memory_size) {
 
     let global_memory = []
 
     for (i = 0; i < memory_size; i++) {
 
-        let new_memory = new memory(0)
+        let new_memory = 0
         global_memory.push(new_memory)
 
     }
@@ -38,11 +22,25 @@ function construct_registers() {
     for (i = 0; i < 16; i++) {
 
         register_name = "R" + i
-        registers[register_name] = new memory(0)
+        registers[register_name] = 0
 
     }
 
     return registers
+
+}
+
+// Opcodes
+
+function add(x, y) {
+
+    return x + y
+
+}
+
+function opcode_constructor() {
+
+
 
 }
 
