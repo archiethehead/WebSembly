@@ -38,9 +38,19 @@ function add(x, y) {
 
 }
 
+function sub(x, y) {
+
+    return x - y
+
+}
+
 function opcode_constructor() {
 
+    let opcodes = {}
+    
+    opcodes["add"] = add
 
+    return opcodes
 
 }
 
@@ -52,6 +62,7 @@ class virtual_machine {
 
         this.global_memory = construct_global_memory(memory_size)
         this.registers = construct_registers()
+        this.opcodes = opcode_constructor()
 
     }
 
@@ -61,3 +72,4 @@ class virtual_machine {
 var a = new virtual_machine(10000)
 console.log(a.global_memory)
 console.log(a.registers)
+console.log(a.opcodes)
