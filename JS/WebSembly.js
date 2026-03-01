@@ -30,30 +30,6 @@ function construct_registers() {
 
 }
 
-// Opcodes
-
-function add(x, y) {
-
-    return x + y
-
-}
-
-function sub(x, y) {
-
-    return x - y
-
-}
-
-function opcode_constructor() {
-
-    let opcodes = {}
-    
-    opcodes["add"] = add
-
-    return opcodes
-
-}
-
 // Virtual Machine
 
 class virtual_machine {
@@ -62,35 +38,59 @@ class virtual_machine {
 
         this.global_memory = construct_global_memory(memory_size)
         this.registers = construct_registers()
-        this.opcodes = opcode_constructor()
+        this.opcodes = {}
+    
+        this.opcodes["add"] = this.add
+        this.opcodes["mov"] = this.mov
 
     }
 
-    execute_instruction(opcode, operand_one, operand_two) {
+    execute_instruction(instruction) {
 
-        if (opcode = "mov") {
+        opcode, operand_one, operand_two, result_register = this.parse_instruction(instruction)
 
-            if (operand_two[0] == '#') {
+        this.registers[result_register] = this.opcodes[opcode](operand_one, addressing_mode(operand_two))
+        
+    }
 
-                operand_two = Number(operand_two.slice(1))
+    addressing_mode(variable) {
 
-            }
+        if (variable[0] == '#') {
 
-            else if (operand_two[0] == 'R') {
-
-                operand_two = this.registers[operand_two]
-
-            }
-
-            else if (operand_two[0] == 'R') {
-
-                operand_two = this.global_memory[operand_two]
-
-            }
-
-            this.registers[operand_one] = operand_two
+                variable = Number(variable.slice(1))
 
         }
+
+        else if (variable[0] == 'R') {
+
+            variable = this.registers[variable]
+
+        }
+
+        else if (variable[0] == 'R') {
+
+            variable = this.global_memory[variable]
+
+        }
+        
+        return variable
+
+    }
+
+    add(x, y) {
+
+        return x + y
+
+    }
+
+    mov(x, y) {
+
+        return y
+
+    }
+
+    parse_instruction(instruction) {
+
 
 
     }
@@ -98,8 +98,3 @@ class virtual_machine {
 }
 
 var a = new virtual_machine(10000)
-a.global_memory[100] = 1
-a.execute_instruction('mov', 'R1', '#1')
-a.execute_instruction('mov', 'R2', 'R1')
-a.execute_instruction('mov', 'R3', 100)
-console.log(a.registers)
