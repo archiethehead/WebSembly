@@ -26,6 +26,8 @@ function construct_registers() {
 
     }
 
+    registers['PC'] = 0
+
     return registers
 
 }
@@ -38,6 +40,7 @@ class virtual_machine {
 
         this.global_memory = construct_global_memory(memory_size)
         this.registers = construct_registers()
+        this.current_instruction = ''
         this.opcodes = {}
     
         this.opcodes["add"] = this.add
@@ -51,6 +54,17 @@ class virtual_machine {
 
         this.registers[result_register] = this.opcodes[opcode](operand_one, addressing_mode(operand_two))
         
+    }
+
+    execute_program(program) {
+
+        while (this.current_instruction != 'HALT') {
+
+            this.current_instruction = program[registers['PC']]
+            this.execute_instruction(this.parse_instruction(this.current_instruction))
+
+        }
+
     }
 
     addressing_mode(variable) {
