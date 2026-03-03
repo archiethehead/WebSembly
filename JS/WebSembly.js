@@ -43,8 +43,11 @@ class virtual_machine {
         this.current_instruction = ''
         this.opcodes = {}
     
-        this.opcodes["ADD"] = this.add.bind(this)
         this.opcodes["MOV"] = this.mov.bind(this)
+        this.opcodes["ADD"] = this.add.bind(this)
+        this.opcodes["SUB"] = this.sub.bind(this)
+        this.opcodes["LSL"] = this.lsl.bind(this)
+        this.opcodes["LSR"] = this.lsr.bind(this)
         this.opcodes["HALT"] = this.halt.bind(this)
 
     }
@@ -105,16 +108,43 @@ class virtual_machine {
 
     }
 
+    mov(x, y, r) {
+
+        this.registers[r] = y
+
+    }
+
     add(x, y, r) {
 
         this.registers[r] = this.registers[x] + y
 
     }
 
-    mov(x, y, r) {
+    sub(x, y, r) {
 
-        this.registers[r] = y
+        this.registers[r] = this.registers[x] - y
 
+    }
+
+    lsl(x, y, r) {
+
+        this.registers[r] = this.registers[x]
+        for (let i = 0; i < y; i++) {
+
+            this.registers[r] = Number(this.registers[r] * 2)
+
+        }
+
+    }
+
+    lsr(x, y, r) {
+
+        this.registers[r] = this.registers[x]
+        for (let i = 0; i < y; i++) {
+
+            this.registers[r] = Number(this.registers[r] / 2)
+
+        }
     }
 
     halt(x, y, r) {
@@ -139,7 +169,7 @@ class virtual_machine {
 
         }
 
-        if (opcode == 'ADD') {
+        if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR') {
 
             operand_one = instruction[2]
             operand_two = this.addressing_mode(instruction[3])
@@ -154,7 +184,7 @@ class virtual_machine {
 }
 
 var a = new virtual_machine(10000)
-program = ["MOV, R1, #5", "ADD, R2, R1, #5", 'HALT']
+program = ["MOV, R1, #5", "ADD, R2, R1, R1", 'SUB, R2, R2, #2', 'LSR, R3, R2, #1', 'HALT']
 a.execute_program(program)
 console.log(program)
 console.log(a.registers)
