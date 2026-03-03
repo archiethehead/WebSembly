@@ -47,6 +47,7 @@ class virtual_machine {
     
         this.opcodes["MOV"] = this.mov.bind(this)
         this.opcodes["CMP"] = this.cmp.bind(this)
+        this.opcodes["BRANCH"] = this.branch.bind(this)
         this.opcodes["LDR"] = this.ldr.bind(this)
         this.opcodes["STR"] = this.str.bind(this)
         this.opcodes["ADD"] = this.add.bind(this)
@@ -98,8 +99,6 @@ class virtual_machine {
 
         }
 
-        console.log(this.labels)
-
         while (this.current_instruction != 'HALT') {
 
             this.current_instruction = program[this.registers['PC']]
@@ -137,6 +136,8 @@ class virtual_machine {
 
     }
 
+    // Opcode Implementations
+
     mov(x, y, r) {
 
         this.registers[r] = y
@@ -146,6 +147,12 @@ class virtual_machine {
     cmp(x, y, r) {
 
         this.cmp_vals = [this.registers[r], y]
+
+    }
+
+    branch(x, y, r) {
+
+        this.registers["PC"] = this.labels[x]
 
     }
 
@@ -270,6 +277,12 @@ class virtual_machine {
 
         }
 
+        if (opcode == "BRANCH") {
+
+            operand_one = instruction[1] + ":"
+
+        }
+
         return [opcode, operand_one, operand_two, result_location]
 
     }
@@ -277,7 +290,7 @@ class virtual_machine {
 }
 
 var a = new virtual_machine(10000)
-program = ["BRANCH:", "NOT, R1, #100", "BRANCH2:", 'HALT']
+program = ['BRANCH, Label', 'MOV, R1, #1', 'Label:',  'HALT']
 a.execute_program(program)
 console.log(program)
 console.log(a.registers)
