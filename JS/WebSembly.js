@@ -43,16 +43,26 @@ class virtual_machine {
         this.current_instruction = ''
         this.opcodes = {}
     
-        this.opcodes["add"] = this.add
-        this.opcodes["mov"] = this.mov
+        this.opcodes["ADD"] = this.add.bind(this)
+        this.opcodes["MOV"] = this.mov.bind(this)
+        this.opcodes["HALT"] = this.halt.bind(this)
 
     }
 
     execute_instruction(instruction) {
 
-        opcode, operand_one, operand_two, result_register = this.parse_instruction(instruction)
+        let opcode = ''
+        let operand_one = ''
+        let operand_two = ''
+        let result_location = ''
 
-        this.registers[result_register] = this.opcodes[opcode](operand_one, addressing_mode(operand_two))
+        instruction = this.parse_instruction(instruction)
+        opcode = instruction[0]
+        operand_one = instruction[1]
+        operand_two = instruction[2]
+        result_location = instruction[3]
+
+        this.opcodes[opcode](operand_one, operand_two, result_location)
         
     }
 
@@ -60,10 +70,14 @@ class virtual_machine {
 
         while (this.current_instruction != 'HALT') {
 
-            this.current_instruction = program[registers['PC']]
-            this.execute_instruction(this.parse_instruction(this.current_instruction))
+            this.current_instruction = program[this.registers['PC']]
+            this.execute_instruction(this.current_instruction)
+
+            this.registers['PC'] += 1
 
         }
+
+        console.log('FIN')
 
     }
 
@@ -81,9 +95,9 @@ class virtual_machine {
 
         }
 
-        else if (variable[0] == 'R') {
+        else if (variable[0] != 'R' & variable[0] != '#') {
 
-            variable = this.global_memory[variable]
+            variable = this.global_memory[Number(variable)]
 
         }
         
@@ -91,24 +105,57 @@ class virtual_machine {
 
     }
 
-    add(x, y) {
+    add(x, y, r) {
 
-        return x + y
+        this.registers[r] = this.registers[x] + y
 
     }
 
-    mov(x, y) {
+    mov(x, y, r) {
 
-        return y
+        this.registers[r] = y
+
+    }
+
+    halt(x, y, r) {
+
+        return ''
 
     }
 
     parse_instruction(instruction) {
 
+        instruction = instruction.split(', ')
+        var opcode = instruction[0]
+        var operand_one = ''
+        var operand_two = ''
+        var result_location = ''
 
+        if (opcode == 'MOV') {
+
+            operand_one = instruction[1]
+            operand_two = this.addressing_mode(instruction[2])
+            result_location = operand_one
+
+        }
+
+        if (opcode == 'ADD') {
+
+            operand_one = instruction[2]
+            operand_two = this.addressing_mode(instruction[3])
+            result_location = instruction[1]
+
+        }
+
+        return [opcode, operand_one, operand_two, result_location]
 
     }
 
 }
 
 var a = new virtual_machine(10000)
+program = ["MOV, R1, #5", "ADD, R2, R1, #5", 'HALT']
+a.execute_program(program)
+console.log(program)
+console.log(a.registers)
+console.log(a.global_memory)
