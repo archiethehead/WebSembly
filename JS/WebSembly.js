@@ -43,11 +43,15 @@ class virtual_machine {
         this.current_instruction = ''
         this.opcodes = {}
         this.labels = {}
-        this.cmp_vals = []
+        this.cmp_vals = [0, 0]
     
         this.opcodes["MOV"] = this.mov.bind(this)
         this.opcodes["CMP"] = this.cmp.bind(this)
-        this.opcodes["BRANCH"] = this.branch.bind(this)
+        this.opcodes["B"] = this.branch.bind(this)
+        this.opcodes["BEQ"] = this.beq.bind(this)
+        this.opcodes["BLT"] = this.blt.bind(this)
+        this.opcodes["BGT"] = this.bgt.bind(this)
+        this.opcodes["BNE"] = this.bne.bind(this)
         this.opcodes["LDR"] = this.ldr.bind(this)
         this.opcodes["STR"] = this.str.bind(this)
         this.opcodes["ADD"] = this.add.bind(this)
@@ -153,6 +157,46 @@ class virtual_machine {
     branch(x, y, r) {
 
         this.registers["PC"] = this.labels[x]
+
+    }
+
+    beq(x, y, r) {
+
+        if (this.cmp_vals[0] == this.cmp_vals[1]) {
+
+            branch(x, y, r)
+
+        }
+
+    }
+
+    blt(x, y, r) {
+
+        if (this.cmp_vals[0] < this.cmp_vals[1]) {
+
+            branch(x, y, r)
+
+        }
+
+    }
+
+    bgt(x, y, r) {
+
+        if (this.cmp_vals[0] > this.cmp_vals[1]) {
+
+            branch(x, y, r)
+
+        }
+
+    }
+
+    bne(x, y, r) {
+
+        if (this.cmp_vals[0] != this.cmp_vals[1]) {
+
+            this.branch(x, y, r)
+
+        }
 
     }
 
@@ -277,7 +321,7 @@ class virtual_machine {
 
         }
 
-        if (opcode == "BRANCH") {
+        if (opcode == "B" | opcode == 'BEQ' | opcode == 'BLT' | opcode == 'BNE' | opcode == 'BGT') {
 
             operand_one = instruction[1] + ":"
 
@@ -290,7 +334,7 @@ class virtual_machine {
 }
 
 var a = new virtual_machine(10000)
-program = ['BRANCH, Label', 'MOV, R1, #1', 'Label:',  'HALT']
+program = ['MOV, R1, #1', 'LOOP:', 'ADD, R1, R1, #1', 'CMP, R1, #5', 'BNE, LOOP', 'HALT']
 a.execute_program(program)
 console.log(program)
 console.log(a.registers)
