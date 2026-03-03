@@ -50,6 +50,10 @@ class virtual_machine {
         this.opcodes["SUB"] = this.sub.bind(this)
         this.opcodes["MUL"] = this.mul.bind(this)
         this.opcodes["DIV"] = this.div.bind(this)
+        this.opcodes["AND"] = this.and.bind(this)
+        this.opcodes["ORR"] = this.or.bind(this)
+        this.opcodes["XOR"] = this.xor.bind(this)
+        this.opcodes["NOT"] = this.not.bind(this)
         this.opcodes["LSL"] = this.lsl.bind(this)
         this.opcodes["LSR"] = this.lsr.bind(this)
         this.opcodes["HALT"] = this.halt.bind(this)
@@ -154,6 +158,30 @@ class virtual_machine {
         
     }
 
+    and(x, y, r) {
+
+        this.registers[r] = this.registers[x] & y
+
+    }
+
+    or(x, y, r) {
+
+        this.registers[r] = this.registers[x] | y
+
+    }
+
+    xor(x, y, r) {
+
+        this.registers[r] = this.registers[x] ^ y
+
+    }
+
+    not(x, y, r) {
+
+        this.registers[r] = ~y
+
+    }
+
     lsl(x, y, r) {
 
         this.registers[r] = this.registers[x]
@@ -190,7 +218,7 @@ class virtual_machine {
         var operand_two = ''
         var result_location = ''
 
-        if (opcode == 'MOV') {
+        if (opcode == 'MOV' | opcode == 'NOT') {
 
             operand_one = instruction[1]
             operand_two = this.addressing_mode(instruction[2])
@@ -206,7 +234,9 @@ class virtual_machine {
 
         }
 
-        if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR' | opcode == 'MUL' | opcode == 'DIV') {
+        if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR' | opcode == 'MUL' | opcode == 'DIV'
+            | opcode == 'AND' | opcode == 'ORR' | opcode == 'XOR'
+        ) {
 
             operand_one = instruction[2]
             operand_two = this.addressing_mode(instruction[3])
@@ -221,7 +251,7 @@ class virtual_machine {
 }
 
 var a = new virtual_machine(10000)
-program = ["MOV, R1, #5", "DIV, R2, R1, R1", 'HALT']
+program = ["NOT, R1, #100", 'HALT']
 a.execute_program(program)
 console.log(program)
 console.log(a.registers)
