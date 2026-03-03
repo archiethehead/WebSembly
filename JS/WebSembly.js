@@ -64,28 +64,32 @@ class virtual_machine {
         this.opcodes["NOT"] = this.not.bind(this)
         this.opcodes["LSL"] = this.lsl.bind(this)
         this.opcodes["LSR"] = this.lsr.bind(this)
-        this.opcodes["HALT"] = this.halt.bind(this)
 
     }
 
+    // Execution
+
     execute_instruction(instruction) {
 
-        if (instruction in this.labels) {
+
+        // Lables and exit commands shouldn't be executed
+        // and can be skipped with a lookup and condition.
+        
+        if (instruction in this.labels | instruction == 'HALT') {
 
             return
 
         }
 
-        let opcode = ''
-        let operand_one = ''
-        let operand_two = ''
-        let result_location = ''
+        // Parsed instruction is ALWAYS returned in the
+        // format 'opcode, operand_one, operand_two,
+        // result_location.'
 
         instruction = this.parse_instruction(instruction)
-        opcode = instruction[0]
-        operand_one = instruction[1]
-        operand_two = instruction[2]
-        result_location = instruction[3]
+        let opcode = instruction[0]
+        let operand_one = instruction[1]
+        let operand_two = instruction[2]
+        let result_location = instruction[3]
 
         this.opcodes[opcode](operand_one, operand_two, result_location)
         
@@ -93,6 +97,7 @@ class virtual_machine {
 
     execute_program(program) {
 
+        // Indexing each label in the program for branching.
         for (let i = 0; i < program.length; i ++){
 
             if (program[i].endsWith(':')) {
@@ -130,6 +135,10 @@ class virtual_machine {
 
         }
 
+        // Addressing global memory should be done with standalone numbers,
+        // the absence of any prepending labels (R, #) indicates memory
+        // addressing.
+
         else if (variable[0] != 'R' & variable[0] != '#') {
 
             variable = this.global_memory[Number(variable)]
@@ -141,25 +150,40 @@ class virtual_machine {
     }
 
     // Opcode Implementations
+    //
+    // All opcodes share the same three operands:
+    //  .operand_one (x)
+    //  .operand_two (y)
+    //  .result_location (r)
+    //
+    // To abstract complexity away from the execution
+    // and parsing functions, but this doesn't mean
+    // all three will be used.
 
+    // Move value 'y' into 'x/r' register.
     mov(x, y, r) {
 
         this.registers[r] = y
 
     }
 
+    // Compare the contents of register 'r' with the
+    // value 'y,' storing them in the cmp cache.
     cmp(x, y, r) {
 
         this.cmp_vals = [this.registers[r], y]
 
     }
 
+    // Branch to 'x' Label
     branch(x, y, r) {
 
         this.registers["PC"] = this.labels[x]
 
     }
 
+    // Branch to label 'x' if the values in the
+    // cmp cache are equal.
     beq(x, y, r) {
 
         if (this.cmp_vals[0] == this.cmp_vals[1]) {
@@ -170,6 +194,8 @@ class virtual_machine {
 
     }
 
+    // Branch to label 'x' if the first value in the
+    // cmp cache is less than the second value.
     blt(x, y, r) {
 
         if (this.cmp_vals[0] < this.cmp_vals[1]) {
@@ -180,6 +206,8 @@ class virtual_machine {
 
     }
 
+    // Branch to label 'x' if the first value in the
+    // cmp cache is greater than the second value.
     bgt(x, y, r) {
 
         if (this.cmp_vals[0] > this.cmp_vals[1]) {
@@ -190,6 +218,8 @@ class virtual_machine {
 
     }
 
+    // Branch to label 'x' if the values in the
+    // cmp cache are not equal.
     bne(x, y, r) {
 
         if (this.cmp_vals[0] != this.cmp_vals[1]) {
@@ -199,67 +229,93 @@ class virtual_machine {
         }
 
     }
-
+    
+    // Load value in memory 'y' into register 'r.'
     ldr(x, y, r) {
 
         this.registers[r] = this.global_memory[y]
 
     }
 
+    // Store value in register 'r' in memorys
+    // location 'y.'
     str(x, y, r) {
 
         this.global_memory[y] = this.registers[r]
 
     }
 
+    // Add 'y' value to register 'x' and store the
+    // result in register 'r.'
     add(x, y, r) {
 
         this.registers[r] = this.registers[x] + y
 
     }
 
+    // Subtract 'y' value from register 'x' and store the
+    // result in register 'r.'
     sub(x, y, r) {
 
         this.registers[r] = this.registers[x] - y
 
     }
 
+    // Multiply 'y' value with register 'x' and store the
+    // result in register 'r.'
     mul(x, y, r) {
 
         this.registers[r] = this.registers[x] * y
         
     }
 
+    // Divide 'y' value by register 'x' and store the
+    // result in register 'r.'
     div(x, y, r) {
 
         this.registers[r] = this.registers[x] / y
         
     }
 
+    // Perform Bitwise AND between the contents of
+    // register 'x,' the value 'y,' and store the
+    // result in register 'r.'
     and(x, y, r) {
 
         this.registers[r] = this.registers[x] & y
 
     }
 
+    // Perform Bitwise OR between the contents of
+    // register 'x,' the value 'y,' and store the
+    // result in register 'r.'
     or(x, y, r) {
 
         this.registers[r] = this.registers[x] | y
 
     }
 
+    // Perform Bitwise Exclusive OR between the contents of
+    // register 'x,' the value 'y,' and store the
+    // result in register 'r.'
     xor(x, y, r) {
 
         this.registers[r] = this.registers[x] ^ y
 
     }
 
+    // Perform Bitwise NOT between the contents of
+    // register 'x,' the value 'y,' and store the
+    // result in register 'r.'
     not(x, y, r) {
 
         this.registers[r] = ~y
 
     }
 
+    // Logically shift left the bits in register 'x'
+    // 'y' number of times, and store the result in
+    // register 'r.'
     lsl(x, y, r) {
 
         this.registers[r] = this.registers[x]
@@ -271,6 +327,9 @@ class virtual_machine {
 
     }
 
+    // Logically shift right the bits in register 'x'
+    // 'y' number of times, and store the result in
+    // register 'r.'
     lsr(x, y, r) {
 
         this.registers[r] = this.registers[x]
@@ -282,13 +341,11 @@ class virtual_machine {
 
     }
 
-    halt(x, y, r) {
-
-        return ''
-
-    }
-
     parse_instruction(instruction) {
+
+        // Some opcodes share operand requirements and as such,
+        // share the same condition for instruction parsing to
+        // save computational complexity.
 
         instruction = instruction.split(', ')
         var opcode = instruction[0]
@@ -334,7 +391,13 @@ class virtual_machine {
 }
 
 var a = new virtual_machine(10000)
-program = ['MOV, R1, #1', 'LOOP:', 'ADD, R1, R1, #1', 'CMP, R1, #5', 'BNE, LOOP', 'HALT']
+program = [
+        'MOV, R1, #1', 'LOOP:',
+        'ADD, R1, R1, #1', 
+        'CMP, R1, #5', 
+        'BNE, LOOP', 
+        'HALT']
+        
 a.execute_program(program)
 console.log(program)
 console.log(a.registers)
