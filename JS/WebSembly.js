@@ -42,8 +42,11 @@ class virtual_machine {
         this.registers = construct_registers()
         this.current_instruction = ''
         this.opcodes = {}
+        this.labels = {}
+        this.cmp_vals = []
     
         this.opcodes["MOV"] = this.mov.bind(this)
+        this.opcodes["CMP"] = this.cmp.bind(this)
         this.opcodes["LDR"] = this.ldr.bind(this)
         this.opcodes["STR"] = this.str.bind(this)
         this.opcodes["ADD"] = this.add.bind(this)
@@ -62,6 +65,12 @@ class virtual_machine {
 
     execute_instruction(instruction) {
 
+        if (instruction in this.labels) {
+
+            return
+
+        }
+
         let opcode = ''
         let operand_one = ''
         let operand_two = ''
@@ -78,6 +87,18 @@ class virtual_machine {
     }
 
     execute_program(program) {
+
+        for (let i = 0; i < program.length; i ++){
+
+            if (program[i].endsWith(':')) {
+
+                this.labels[program[i]] = i
+
+            }
+
+        }
+
+        console.log(this.labels)
 
         while (this.current_instruction != 'HALT') {
 
@@ -119,6 +140,12 @@ class virtual_machine {
     mov(x, y, r) {
 
         this.registers[r] = y
+
+    }
+
+    cmp(x, y, r) {
+
+        this.cmp_vals = [this.registers[r], y]
 
     }
 
@@ -218,7 +245,7 @@ class virtual_machine {
         var operand_two = ''
         var result_location = ''
 
-        if (opcode == 'MOV' | opcode == 'NOT') {
+        if (opcode == 'MOV' | opcode == 'NOT' | opcode == 'CMP') {
 
             operand_one = instruction[1]
             operand_two = this.addressing_mode(instruction[2])
@@ -235,8 +262,7 @@ class virtual_machine {
         }
 
         if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR' | opcode == 'MUL' | opcode == 'DIV'
-            | opcode == 'AND' | opcode == 'ORR' | opcode == 'XOR'
-        ) {
+            | opcode == 'AND' | opcode == 'ORR' | opcode == 'XOR') {
 
             operand_one = instruction[2]
             operand_two = this.addressing_mode(instruction[3])
@@ -251,7 +277,7 @@ class virtual_machine {
 }
 
 var a = new virtual_machine(10000)
-program = ["NOT, R1, #100", 'HALT']
+program = ["BRANCH:", "NOT, R1, #100", "BRANCH2:", 'HALT']
 a.execute_program(program)
 console.log(program)
 console.log(a.registers)
