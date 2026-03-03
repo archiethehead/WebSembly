@@ -44,8 +44,12 @@ class virtual_machine {
         this.opcodes = {}
     
         this.opcodes["MOV"] = this.mov.bind(this)
+        this.opcodes["LDR"] = this.ldr.bind(this)
+        this.opcodes["STR"] = this.str.bind(this)
         this.opcodes["ADD"] = this.add.bind(this)
         this.opcodes["SUB"] = this.sub.bind(this)
+        this.opcodes["MUL"] = this.mul.bind(this)
+        this.opcodes["DIV"] = this.div.bind(this)
         this.opcodes["LSL"] = this.lsl.bind(this)
         this.opcodes["LSR"] = this.lsr.bind(this)
         this.opcodes["HALT"] = this.halt.bind(this)
@@ -114,6 +118,18 @@ class virtual_machine {
 
     }
 
+    ldr(x, y, r) {
+
+        this.registers[r] = this.global_memory[y]
+
+    }
+
+    str(x, y, r) {
+
+        this.global_memory[y] = this.registers[r]
+
+    }
+
     add(x, y, r) {
 
         this.registers[r] = this.registers[x] + y
@@ -124,6 +140,18 @@ class virtual_machine {
 
         this.registers[r] = this.registers[x] - y
 
+    }
+
+    mul(x, y, r) {
+
+        this.registers[r] = this.registers[x] * y
+        
+    }
+
+    div(x, y, r) {
+
+        this.registers[r] = this.registers[x] / y
+        
     }
 
     lsl(x, y, r) {
@@ -145,6 +173,7 @@ class virtual_machine {
             this.registers[r] = Number(this.registers[r] / 2)
 
         }
+
     }
 
     halt(x, y, r) {
@@ -169,7 +198,15 @@ class virtual_machine {
 
         }
 
-        if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR') {
+        if (opcode == 'LDR' | opcode == 'STR') {
+
+            operand_one = instruction[1]
+            operand_two = instruction[2]
+            result_location = operand_one       
+
+        }
+
+        if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR' | opcode == 'MUL' | opcode == 'DIV') {
 
             operand_one = instruction[2]
             operand_two = this.addressing_mode(instruction[3])
@@ -184,7 +221,7 @@ class virtual_machine {
 }
 
 var a = new virtual_machine(10000)
-program = ["MOV, R1, #5", "ADD, R2, R1, R1", 'SUB, R2, R2, #2', 'LSR, R3, R2, #1', 'HALT']
+program = ["MOV, R1, #5", "DIV, R2, R1, R1", 'HALT']
 a.execute_program(program)
 console.log(program)
 console.log(a.registers)
