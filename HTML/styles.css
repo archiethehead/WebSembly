@@ -1,0 +1,100 @@
+.container {
+  display: grid;
+  grid-template-areas:
+      "controls controls"
+      "ide registers"
+      "ide memory";
+
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 60px 1fr 1fr;
+
+  height: 100vh;
+}
+
+.controls {
+  grid-area: controls;
+  background: #333;
+  color: white;
+  padding: 10px;
+}
+
+.ide {
+  grid-area: ide;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #c0c0c0;
+}
+
+.registers {
+  grid-area: registers;
+  background: #1e1e1e;
+  color: white;
+  padding: 10px;
+}
+
+.memory {
+  grid-area: memory;
+  background: #1e1e1e;
+  color: white;
+  padding: 10px;
+}
+
+
+@import url(https://fonts.googleapis.com/css?family=Indie+Flower);
+body {
+  margin: 0;  
+  padding: 0;
+  background: rgb(192, 192, 192);
+}
+.paper {
+  position: relative;
+  height: 95%;
+  width: 90%;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0px 0px 5px 0px #888;
+}
+
+.paper::before {
+  content: '';
+  position: absolute;
+  left: 45px;
+  height: 100%;
+  width: 2px;
+  background: rgba(255,0,0,0.4);
+}
+.lines {
+  margin-top: 40px;
+  height: calc(100% - 40px);
+  width: 100%;
+  background-image: repeating-linear-gradient(white 0px, white 24px, steelblue 25px);
+}
+.text {
+  position: absolute;
+  top: 65px;
+  left: 55px;
+  bottom: 10px;
+  right: 10px;
+  line-height: 25px;
+  font-family: 'Indie Flower';
+  overflow: hidden;
+  outline: none;
+}
+.holes {
+  position: absolute;
+  left: 10px;
+  height: 25px;
+  width: 25px;
+  background: lightgoldenrodyellow;
+  border-radius: 50%;
+  box-shadow: inset 0px 0px 2px 0px #888;
+}
+.hole-top {
+  top: 10%;
+}
+.hole-middle {
+  top: 50%;
+}
+.hole-bottom {
+  bottom: 10%;
+}

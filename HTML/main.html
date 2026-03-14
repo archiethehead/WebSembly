@@ -1,5 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="styles.css">
+</head>
+
 <body>
 
-    <script src = "../JS/WebSembly.js"></script>
+<div class="container">
+
+    <div class="controls">
+        <button>Run</button>
+        <button>Step</button>
+        <button>Reset</button>
+        <button>Save</button>
+        <button>Load</button>
+    </div>
+
+    <div class="ide">
+
+        <div class="paper">        
+
+            <div class="lines">
+
+                <div class="text"
+                     contenteditable="true"
+                     spellcheck="false">
+(Enter Code Here)
+                </div>
+
+            </div>
+
+            <div class="holes hole-top"></div>
+            <div class="holes hole-middle"></div>
+            <div class="holes hole-bottom"></div>
+
+        </div>
+
+    </div>
+
+    <div class="registers">
+        <h3>Registers</h3>
+        <div id="registerView"></div>
+    </div>
+
+    <div class="memory">
+        <h3>Memory</h3>
+        <div id="memoryView"></div>
+    </div>
+
+</div>
 
 </body>
+</html>
