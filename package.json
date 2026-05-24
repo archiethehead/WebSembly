@@ -1,0 +1,23 @@
+{
+  "name": "websembly",
+  "version": "1.0.0",
+  "description": "Node and Express JS package for content management with Azure, utilising a polyglot persistence model for storing and retrieving user data in the form of a relational (SQL) databse for sensitive user data and story metadata, and document store (JSON) database for program instructional data.",
+  "homepage": "https://github.com/archiethehead/WebSembly#readme",
+  "bugs": {
+    "url": "https://github.com/archiethehead/WebSembly/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/archiethehead/WebSembly.git"
+  },
+  "license": "UNLICENSED",
+  "author": "Mr. Archie T. Healy",
+  "type": "commonjs",
+  "main": "JS/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
