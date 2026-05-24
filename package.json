@@ -13,7 +13,7 @@
   "license": "UNLICENSED",
   "author": "Mr. Archie T. Healy",
   "type": "commonjs",
-  "main": "JS/index.js",
+  "main": "Public/JS/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
