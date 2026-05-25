@@ -1,5 +1,32 @@
-h1 {
+.grid-container {
 
-    color: aquamarine;
+  display: grid;
+  align-content: flex-start;
+  grid-template-columns: auto auto;
+
+}
+
+.code-area {
+
+  height: 95vh;
+  width: 65vw;
+
+}
+
+.code-text-area {
+
+  resize: none;
+  height: 93%;
+  width: 100%;
+  
+  background-color: #3e4637;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+
+}
+
+.page-body {
+
+  background-color: #4c5844;
 
 }

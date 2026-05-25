@@ -67,6 +67,12 @@ class virtual_machine {
 
     }
 
+    return_registers() {
+
+        return this.registers
+
+    }
+
     // Execution
 
     execute_instruction(instruction) {
@@ -390,15 +396,33 @@ class virtual_machine {
 
 }
 
-var a = new virtual_machine(10000)
+const vm = new virtual_machine(1000);
+
 program = [
         'MOV, R1, #1', 'LOOP:',
         'ADD, R1, R1, #1', 
         'CMP, R1, #5', 
         'BNE, LOOP', 
         'HALT']
-        
-a.execute_program(program)
-console.log(program)
-console.log(a.registers)
-console.log(a.global_memory)
+
+function refresh_registers() {
+
+    var table = document.getElementById("register_table");
+    var register_data = vm.return_registers();
+
+    var keys = Object.keys(register_data);
+    console.log(keys);
+
+    for (x = 0; x < keys.length;  x ++) {
+
+        var row = table.insertRow(-1);
+
+        var data = row.insertCell(register_data[keys[x]])
+        var register = row.insertCell(keys[x]);
+
+        register.innerHTML = keys[x];
+        data.innerHTML = register_data[keys[x]];
+
+    }
+
+}
