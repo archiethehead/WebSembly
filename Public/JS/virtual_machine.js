@@ -1,4 +1,5 @@
 const memory_size = 256
+let cold_start = true
 
 // Memory
 
@@ -58,14 +59,22 @@ class virtual_machine {
         this.opcodes["STR"] = this.str.bind(this)
         this.opcodes["ADD"] = this.add.bind(this)
         this.opcodes["SUB"] = this.sub.bind(this)
-        this.opcodes["MUL"] = this.mul.bind(this)
-        this.opcodes["DIV"] = this.div.bind(this)
         this.opcodes["AND"] = this.and.bind(this)
         this.opcodes["ORR"] = this.or.bind(this)
         this.opcodes["XOR"] = this.xor.bind(this)
         this.opcodes["NOT"] = this.not.bind(this)
         this.opcodes["LSL"] = this.lsl.bind(this)
         this.opcodes["LSR"] = this.lsr.bind(this)
+
+    }
+
+    refresh_values() {
+
+        this.global_memory = construct_global_memory(memory_size)
+        this.registers = construct_registers()
+        this.current_instruction = ''
+        this.labels = {}
+        this.cmp_vals = [0, 0]
 
     }
 
@@ -90,7 +99,7 @@ class virtual_machine {
         // Lables and exit commands shouldn't be executed
         // and can be skipped with a lookup and condition.
         
-        if (instruction in this.labels | instruction == 'HALT') {
+        if (instruction in this.labels || instruction == "HALT") {
 
             return
 
@@ -133,6 +142,7 @@ class virtual_machine {
         }
 
         console.log('FIN')
+        return
 
     }
 
@@ -276,22 +286,6 @@ class virtual_machine {
 
     }
 
-    // Multiply 'y' value with register 'x' and store the
-    // result in register 'r.'
-    mul(x, y, r) {
-
-        this.registers[r] = this.registers[x] * y
-        
-    }
-
-    // Divide 'y' value by register 'x' and store the
-    // result in register 'r.'
-    div(x, y, r) {
-
-        this.registers[r] = this.registers[x] / y
-        
-    }
-
     // Perform Bitwise AND between the contents of
     // register 'x,' the value 'y,' and store the
     // result in register 'r.'
@@ -384,8 +378,7 @@ class virtual_machine {
 
         }
 
-        if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR' | opcode == 'MUL' | opcode == 'DIV'
-            | opcode == 'AND' | opcode == 'ORR' | opcode == 'XOR') {
+        if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR' | opcode == 'AND' | opcode == 'ORR' | opcode == 'XOR') {
 
             operand_one = instruction[2]
             operand_two = this.addressing_mode(instruction[3])
@@ -407,13 +400,6 @@ class virtual_machine {
 
 const vm = new virtual_machine(memory_size);
 
-program = [
-        'MOV, R1, #1', 'LOOP:',
-        'ADD, R1, R1, #1', 
-        'CMP, R1, #5', 
-        'BNE, LOOP', 
-        'HALT']
-
 function refresh_registers() {
 
     var table = document.getElementById("register_table");
@@ -421,17 +407,41 @@ function refresh_registers() {
 
     var keys = Object.keys(register_data)
 
-    for (var x = 0; x < keys.length;  x ++) {
+    len = keys.length
+    x = 0
 
-        var row = table.insertRow(-1);
-        
-        var register = row.insertCell(0)
+    if (!cold_start) {
 
-        var data = row.insertCell(1)
-        data.classList.add('data-value')
+        table = document.querySelector("#register_table tbody")
+        x += 1
+        len -= 1
 
-        register.innerHTML = keys[x]
-        data.innerHTML = register_data[keys[x]]
+    }
+
+    for (x; x < len;  x ++) {
+
+
+        if (cold_start) {
+
+            var row = table.insertRow(-1)   
+            var address = row.insertCell(0)
+            var data = row.insertCell(1)
+
+            data.classList.add('data-value')
+            address.innerHTML = keys[x]
+            data.innerHTML = register_data[keys[x]]
+
+        }
+
+        else {
+
+
+            var row = table.rows[x]
+            var data = row.cells[1]
+            
+            data.innerHTML = register_data[keys[x - 1]]
+
+        }
 
     }
 
@@ -441,21 +451,95 @@ function refresh_memory() {
 
     var table = document.getElementById("memory_table")
     var memory_data = vm.return_memory()
-
     var keys = Object.keys(memory_data)
 
-    for (var x = 0; x < keys.length;  x ++) {
+    len = keys.length
+    x = 0
 
-        var row = table.insertRow(-1)   
+    if (!cold_start) {
 
-        var address = row.insertCell(0)
-
-        var data = row.insertCell(1)
-        data.classList.add('data-value')
-
-        address.innerHTML = keys[x]
-        data.innerHTML = memory_data[keys[x]]
+        table = document.querySelector("#memory_table tbody")
+        x += 1
+        len -= 1
 
     }
+
+    for (x; x <  len;  x ++) {
+
+        if (cold_start) {
+
+            var row = table.insertRow(-1)   
+            var address = row.insertCell(0)
+            var data = row.insertCell(1)
+            data.classList.add('data-value')
+            address.innerHTML = keys[x]
+            data.innerHTML = memory_data[keys[x]]
+
+        }
+
+        else {
+
+            console.log("a")
+            var row = table.rows[x]
+            var data = row.cells[1]
+            
+            data.innerHTML = memory_data[keys[x - 1]]
+
+        }
+
+    }
+
+    if (cold_start) {
+
+        cold_start = false
+
+    }
+
+}
+
+// 0 -> No halt instruction, program can't execute
+
+function parse_program(raw_program) {
+
+    raw_program = raw_program.split("\n")
+    raw_program = raw_program.filter(item => item !== "" && item !== null && item !== undefined);
+    
+    for (var x = 0; x < raw_program.length; x++) {
+
+        raw_program[x] = raw_program[x].trim()
+
+    }
+
+    if (!(raw_program.includes("HALT"))) {
+
+        return [1, raw_program]
+
+    }
+
+    return [0, raw_program]
+
+}
+
+function execute() {
+
+    var results = parse_program(document.getElementById("code_text_area").value)
+    var exit_code = results[0]
+    var program = results[1]
+
+    switch (exit_code) {
+
+        case 0:
+            vm.refresh_values()
+            vm.execute_program(program)
+            refresh_memory()
+            refresh_registers()
+            return
+
+
+        case 1:
+            console.log("MUST IMPLEMENT NO HALT ERROR")
+
+    }
+    
 
 }

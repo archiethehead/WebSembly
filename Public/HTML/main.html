@@ -11,7 +11,7 @@
         <div class = "control-bar">
 
             <div class = "control-bar-button-area">
-                <button class = "control-bar-button">RUN PROGRAM</button>
+                <button class = "control-bar-button" onclick = "execute();">RUN PROGRAM</button>
                 <button class = "control-bar-button">RUN STEP</button>
                 <button class = "control-bar-button">SAVE</button>
                 <button class = "control-bar-button">LOAD</button>
@@ -27,7 +27,7 @@
         <div class = "grid-container">
             
             <div class = "code-area">
-                <textarea class = "code-text-area" placeholder="Enter code here . . ."></textarea>
+                <textarea class = "code-text-area" placeholder="Enter code here . . ." id = "code_text_area"></textarea>
             </div>
 
             <div class = "table-area">
@@ -43,7 +43,9 @@
                             <th>DATA</th>
                         </tr>
 
-                        <script> refresh_registers() </script>
+                        <tbody>
+                            <script> refresh_registers() </script>
+                        </tbody>
 
                     </table>
                 
@@ -61,8 +63,10 @@
                                 <th>DATA</th>
                             </tr>
                         </thead>
-
-                        <script> refresh_memory() </script>
+                        
+                        <tbody>
+                            <script>refresh_memory()</script>
+                        </tbody>
 
                     </table>
 
