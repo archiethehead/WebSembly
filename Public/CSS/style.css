@@ -1,32 +1,122 @@
+/* Global Styles */
+
+.page-body {
+
+  background-color: #4c5844;
+
+}
+
 .grid-container {
 
   display: grid;
   align-content: flex-start;
-  grid-template-columns: auto auto;
+  grid-template-columns: 2fr 1fr;
+  padding-top: 5px;
 
 }
 
+caption, th, td {
+
+  border: 1px solid black;
+  column-width: 100%;
+  background: #3e4637;
+  color:white;
+
+}
+
+caption, th {
+
+  position: sticky;
+  top: 4%;
+  color: #d6ec00;
+  
+  background: #3e4637;
+  z-index: 1;
+
+}
+
+caption {
+
+  top: 0;
+  padding-bottom: 5px;
+  color: white;
+
+}
+
+td {
+
+  width: 10%;
+
+}
+
+
+/* Coding Area */
+
 .code-area {
 
-  height: 95vh;
   width: 65vw;
+  height: 90vh;
 
 }
 
 .code-text-area {
 
   resize: none;
-  height: 93%;
-  width: 100%;
+  height: 100%;
+  width: 99%;
   
   background-color: #3e4637;
   color: white;
   font-family: 'Courier New', Courier, monospace;
+  font-size: medium;
 
 }
 
-.page-body {
+/* Register Table Area */
 
-  background-color: #4c5844;
+.table-area {
+
+  height: 90vh;
+  width: 32vw;
+  display: flex;
+
+}
+
+.register-table-area {
+
+  height: 100%;
+  width: 50%;
+
+}
+
+.register-table, .memory-table {
+
+  display: block;
+  border-collapse: separate;
+  border-spacing: 0px;
+  width: 100%;
+  column-width: 100%;
+  grid-column-end: span;
+
+}
+
+.memory-table {
+  
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+}
+
+.memory-table-area {
+
+  width: 50%;
+
+}
+
+.data-value {
+
+  color: #d6ec00;
 
 }

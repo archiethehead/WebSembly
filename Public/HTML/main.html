@@ -7,14 +7,49 @@
     </head>
 
     <body class = "page-body">
-        
-        <button>PLACEHOLDER</button>
 
         <div class = "grid-container">
             
-            <!-- Code entry below d6ec00 -->
             <div class = "code-area">
                 <textarea class = "code-text-area" placeholder="Enter code here . . ."></textarea>
+            </div>
+
+            <div class = "table-area">
+                
+                <div class = "register-table-area">
+
+                    <table class = "register-table" id = "register_table">
+
+                        <caption style="color: white">REGISTERS</caption>
+
+                        <tr>
+                            <th>Address</th>
+                            <th>Data</th>
+                        </tr>
+
+                        <script> refresh_registers() </script>
+
+                    </table>
+                
+                    </div>
+
+                <div class = "memory-table-area">
+
+                    <table class = "memory-table" id = "memory_table">
+
+                        <caption style="color: white">MEMORY ADDRESSES</caption>
+
+                        <tr>
+                            <th>Address</th>
+                            <th>Data</th>
+                        </tr>
+
+                        <script> refresh_memory() </script>
+
+                    </table>
+
+                </div>
+                
             </div>
 
         </div>

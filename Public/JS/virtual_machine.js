@@ -73,6 +73,13 @@ class virtual_machine {
 
     }
 
+
+    return_memory() {
+
+        return this.global_memory
+
+    }
+
     // Execution
 
     execute_instruction(instruction) {
@@ -396,7 +403,7 @@ class virtual_machine {
 
 }
 
-const vm = new virtual_machine(1000);
+const vm = new virtual_machine(256);
 
 program = [
         'MOV, R1, #1', 'LOOP:',
@@ -410,18 +417,42 @@ function refresh_registers() {
     var table = document.getElementById("register_table");
     var register_data = vm.return_registers();
 
-    var keys = Object.keys(register_data);
-    console.log(keys);
+    var keys = Object.keys(register_data)
 
-    for (x = 0; x < keys.length;  x ++) {
+    for (var x = 0; x < keys.length;  x ++) {
 
         var row = table.insertRow(-1);
+        
+        var register = row.insertCell(0)
 
-        var data = row.insertCell(register_data[keys[x]])
-        var register = row.insertCell(keys[x]);
+        var data = row.insertCell(1)
+        data.classList.add('data-value')
 
-        register.innerHTML = keys[x];
-        data.innerHTML = register_data[keys[x]];
+        register.innerHTML = keys[x]
+        data.innerHTML = register_data[keys[x]]
+
+    }
+
+}
+
+function refresh_memory() {
+
+    var table = document.getElementById("memory_table")
+    var memory_data = vm.return_memory()
+
+    var keys = Object.keys(memory_data)
+
+    for (var x = 0; x < keys.length;  x ++) {
+
+        var row = table.insertRow(-1)   
+
+        var address = row.insertCell(0)
+
+        var data = row.insertCell(1)
+        data.classList.add('data-value')
+
+        address.innerHTML = keys[x]
+        data.innerHTML = memory_data[keys[x]]
 
     }
 
