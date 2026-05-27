@@ -8,6 +8,22 @@
 
     <body class = "page-body">
 
+        <div class = "control-bar">
+
+            <div class = "control-bar-button-area">
+                <button class = "control-bar-button">RUN PROGRAM</button>
+                <button class = "control-bar-button">RUN STEP</button>
+                <button class = "control-bar-button">SAVE</button>
+                <button class = "control-bar-button">LOAD</button>
+            </div>
+
+            <div class = "control-bar-button-area">
+                <button class = "control-bar-button">INSTRUCTION SET</button>
+                <button class = "control-bar-button">PROFILE</button>
+            </div>
+
+        </div>
+
         <div class = "grid-container">
             
             <div class = "code-area">
@@ -20,11 +36,11 @@
 
                     <table class = "register-table" id = "register_table">
 
-                        <caption style="color: white">REGISTERS</caption>
+                        <caption>REGISTERS</caption>
 
                         <tr>
-                            <th>Address</th>
-                            <th>Data</th>
+                            <th>ADDRESS</th>
+                            <th>DATA</th>
                         </tr>
 
                         <script> refresh_registers() </script>
@@ -37,12 +53,14 @@
 
                     <table class = "memory-table" id = "memory_table">
 
-                        <caption style="color: white">MEMORY ADDRESSES</caption>
+                        <thead>
+                            <caption>MEMORY</caption>
 
-                        <tr>
-                            <th>Address</th>
-                            <th>Data</th>
-                        </tr>
+                            <tr>
+                                <th>ADDRESS</th>
+                                <th>DATA</th>
+                            </tr>
+                        </thead>
 
                         <script> refresh_memory() </script>
 

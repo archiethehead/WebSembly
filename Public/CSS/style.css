@@ -2,7 +2,7 @@
 
 .page-body {
 
-  background-color: #4c5844;
+  background-color: #2b3929;
 
 }
 
@@ -17,9 +17,11 @@
 
 caption, th, td {
 
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
   border: 1px solid black;
   column-width: 100%;
-  background: #3e4637;
+  background: #4c5844;
   color:white;
 
 }
@@ -27,10 +29,10 @@ caption, th, td {
 caption, th {
 
   position: sticky;
-  top: 4%;
+  top: 3.15%;
   color: #d6ec00;
-  
-  background: #3e4637;
+  font-weight: normal;
+  background: #4c5844;
   z-index: 1;
 
 }
@@ -38,7 +40,6 @@ caption, th {
 caption {
 
   top: 0;
-  padding-bottom: 5px;
   color: white;
 
 }
@@ -46,6 +47,47 @@ caption {
 td {
 
   width: 10%;
+
+}
+
+/* Control Bar */
+
+
+.control-bar {
+
+  flex-direction: row;
+  display: flex;
+  justify-content: space-between;
+  background-color: #4c5844;
+  border: 1px solid black;
+  height: 5vh;
+  width: 98vw;
+
+}
+
+.control-bar-button-area {
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+}
+
+.control-bar-button {
+  
+  font-family: 'Courier New', Courier, monospace;
+  height: auto;
+  font-size: 1rem;
+  cursor: pointer;
+  color: #d6ec00;
+  background-color: #4c5844;
+  border: 1px solid black;
+  height: 85%;
+  margin: 1px;
+  margin-left: 2px;
+  margin-right: 2px;
+  justify-content: center;
 
 }
 
@@ -62,13 +104,13 @@ td {
 .code-text-area {
 
   resize: none;
-  height: 100%;
+  height: 99%;
   width: 99%;
-  
-  background-color: #3e4637;
+  background-color: #4c5844;
   color: white;
   font-family: 'Courier New', Courier, monospace;
-  font-size: medium;
+  font-size: 1rem;
+  border: 1px solid black;
 
 }
 
@@ -91,6 +133,7 @@ td {
 
 .register-table, .memory-table {
 
+  font-size: 1rem;
   display: block;
   border-collapse: separate;
   border-spacing: 0px;
@@ -106,8 +149,12 @@ td {
   max-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: white#4c5844;
 
 }
+
 
 .memory-table-area {
 

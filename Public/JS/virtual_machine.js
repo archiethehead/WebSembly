@@ -1,3 +1,5 @@
+const memory_size = 256
+
 // Memory
 
 function construct_global_memory(memory_size) {
@@ -403,7 +405,7 @@ class virtual_machine {
 
 }
 
-const vm = new virtual_machine(256);
+const vm = new virtual_machine(memory_size);
 
 program = [
         'MOV, R1, #1', 'LOOP:',
