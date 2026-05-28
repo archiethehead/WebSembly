@@ -61,7 +61,7 @@ td {
   background-color: #4c5844;
   border: 1px solid black;
   height: 5vh;
-  width: 98vw;
+  width: 99vw;
 
 }
 
@@ -91,12 +91,22 @@ td {
 
 }
 
+.control-bar-title {
+
+  justify-content: center;
+  font-family: 'Perfect DOS VGA 437 Win', sans-serif;
+  color: #d6ec00;
+  font-size: 2.15rem;
+  font-weight: normal;
+  letter-spacing: -1px
+
+}
 
 /* Coding Area */
 
 .code-area {
 
-  width: 65vw;
+  width: 50vw;
   height: 90vh;
 
 }
@@ -105,7 +115,7 @@ td {
 
   resize: none;
   height: 99%;
-  width: 99%;
+  width: 100%;
   background-color: #4c5844;
   color: white;
   font-family: 'Courier New', Courier, monospace;
@@ -119,7 +129,7 @@ td {
 .table-area {
 
   height: 90vh;
-  width: 32vw;
+  width: 48vw;
   display: flex;
 
 }
@@ -131,7 +141,7 @@ td {
 
 }
 
-.register-table, .memory-table {
+.register-table, .memory-table, .program-table {
 
   font-size: 1rem;
   display: block;
@@ -140,11 +150,13 @@ td {
   width: 100%;
   column-width: 100%;
   grid-column-end: span;
+  border: 1px solid black;
 
 }
 
 .memory-table {
   
+  margin-left: 2%;
   height: 100%;
   max-height: 100%;
   overflow-y: auto;
@@ -152,6 +164,13 @@ td {
   scrollbar-gutter: stable;
   scrollbar-width: thin;
   scrollbar-color: white#4c5844;
+
+}
+
+.program-table {
+
+  margin-top: 2%;
+  column-width: 50%;
 
 }
 
@@ -164,6 +183,7 @@ td {
 
 .data-value {
 
+  width: fit-content;
   color: #d6ec00;
 
 }

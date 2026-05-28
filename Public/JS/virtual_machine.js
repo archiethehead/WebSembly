@@ -1,4 +1,4 @@
-const memory_size = 256
+const memory_size = 1024
 let cold_start = true
 
 // Memory
@@ -29,7 +29,10 @@ function construct_registers() {
 
     }
 
-    registers['PC'] = 0
+    registers['PC'] = ""
+    registers['CI'] = ""
+    registers['LR'] = ""
+    registers['Error'] = ""
 
     return registers
 
@@ -99,7 +102,7 @@ class virtual_machine {
         // Lables and exit commands shouldn't be executed
         // and can be skipped with a lookup and condition.
         
-        if (instruction in this.labels || instruction == "HALT") {
+        if (instruction in this.labels || instruction.toUpperCase() == "HALT") {
 
             return
 
@@ -110,16 +113,28 @@ class virtual_machine {
         // result_location.'
 
         instruction = this.parse_instruction(instruction)
+
+        if (!instruction) {
+
+            return true
+
+        }
+
         let opcode = instruction[0]
         let operand_one = instruction[1]
         let operand_two = instruction[2]
         let result_location = instruction[3]
+
+        this.registers['CI'] = opcode
+        this.registers['LR'] = result_location
 
         this.opcodes[opcode](operand_one, operand_two, result_location)
         
     }
 
     execute_program(program) {
+
+        this.registers['PC'] = 0
 
         // Indexing each label in the program for branching.
         for (let i = 0; i < program.length; i ++){
@@ -132,31 +147,107 @@ class virtual_machine {
 
         }
 
-        while (this.current_instruction != 'HALT') {
+        while (this.current_instruction.toUpperCase() != 'HALT') {
+
+            if (this.registers['PC'] == program.length) {
+                
+                break
+
+            }
 
             this.current_instruction = program[this.registers['PC']]
-            this.execute_instruction(this.current_instruction)
+            var error = this.execute_instruction(this.current_instruction)
+
+            if (error) {
+
+                return 1;
+
+            }
 
             this.registers['PC'] += 1
 
         }
 
-        console.log('FIN')
+        if (this.current_instruction.toUpperCase() == 'HALT') {
+
+            this.registers['CI'] = 'HALT'
+            this.registers['Next Opcode'] = ''
+            this.registers['LR'] = ''
+
+        }
+
+        this.registers['PC'] -= 1
+
         return
 
     }
 
     addressing_mode(variable) {
 
-        if (variable[0] == '#') {
+        var base = 10
+        console.log(variable)
 
-                variable = Number(variable.slice(1))
+        if (variable.slice(0, 2).toLowerCase() == '0x') {
+
+            base = 16
 
         }
 
-        else if (variable[0] == 'R') {
+        else if (variable.slice(0, 2).toLowerCase() == '0b') {
 
-            variable = this.registers[variable]
+            base = 2
+
+        }
+
+        if (variable[0] == '#') {
+
+
+            var result = 0
+
+            if (base == 16) {
+
+                result = parseInt(variable, 16)
+                
+            }
+
+            else if (base == 2) {
+
+                result = parseInt(variable.slice(2), 2)
+
+            }
+
+
+            else {
+
+                result = Number(variable.slice(1))
+
+            }
+            
+            if (result == NaN) {
+
+                this.registers['Error'] = 'Invalid Number'
+                return false
+
+            }
+
+            return result
+
+
+
+        }
+
+        else if (variable[0].toUpperCase() == 'R') {
+
+
+            if (!(variable.toUpperCase() in this.registers)) {
+
+                console.log("a")
+                this.registers['Error'] = 'Invalid Register'
+                return false
+
+            }
+
+            return this.registers[variable.toUpperCase()]
 
         }
 
@@ -166,11 +257,19 @@ class virtual_machine {
 
         else if (variable[0] != 'R' & variable[0] != '#') {
 
-            variable = this.global_memory[Number(variable)]
+            if (!(variable in this.global_memory)) {
+
+                this.registers['Error'] = 'Invalid Memory'
+                return false
+
+            }
+
+            return this.global_memory[Number(variable)]
 
         }
-        
-        return variable
+
+        this.registers['Error'] = 'Invalid Operand'
+        return false
 
     }
 
@@ -187,7 +286,7 @@ class virtual_machine {
 
     // Move value 'y' into 'x/r' register.
     mov(x, y, r) {
-
+    
         this.registers[r] = y
 
     }
@@ -356,39 +455,114 @@ class virtual_machine {
         // share the same condition for instruction parsing to
         // save computational complexity.
 
+        var opcode = instruction.substring(0, instruction.indexOf(' '))
+        var instruction = instruction.substring(instruction.indexOf(' ') + 1)
+
+        if (!(opcode.toUpperCase() in this.opcodes)) {
+
+            this.registers['LR'] = ''
+            this.registers['CI'] = opcode
+
+
+            this.registers['Error'] = "Illegal Opcode"
+            return false
+
+        }
+
         instruction = instruction.split(', ')
-        var opcode = instruction[0]
+
+        opcode = opcode.toUpperCase()
+
         var operand_one = ''
         var operand_two = ''
         var result_location = ''
 
         if (opcode == 'MOV' | opcode == 'NOT' | opcode == 'CMP') {
 
-            operand_one = instruction[1]
-            operand_two = this.addressing_mode(instruction[2])
+            operand_one = instruction[0].toUpperCase()
+
+            if (!(operand_one in this.registers)) {
+
+                this.registers['Error'] = "Invalid Register"
+                return false
+
+            }
+
+            operand_two = this.addressing_mode(instruction[1])
+
+            if (operand_two == false) {
+
+                return false
+
+            }
+
             result_location = operand_one
 
         }
 
         if (opcode == 'LDR' | opcode == 'STR') {
 
-            operand_one = instruction[1]
-            operand_two = instruction[2]
-            result_location = operand_one       
+            operand_one = instruction[0].toUpperCase()
+            operand_two = instruction[1].toUpperCase()
+
+            if (!(operand_one in this.registers)) {
+
+                this.registers['Error'] = "Invalid Register"
+                return false
+
+            }
+
+            if (!(operand_two in this.registers)) {
+
+                this.registers['Error'] = "Invalid Memory"
+                return false
+
+            }
+
+            result_location = operand_one.toUpperCase()  
 
         }
 
         if (opcode == 'ADD' | opcode == 'SUB' | opcode == 'LSL' | opcode == 'LSR' | opcode == 'AND' | opcode == 'ORR' | opcode == 'XOR') {
 
-            operand_one = instruction[2]
-            operand_two = this.addressing_mode(instruction[3])
-            result_location = instruction[1]
+            operand_one = instruction[1].toUpperCase()
+
+            if (!(operand_one in this.registers)) {
+
+                this.registers['Error'] = "Invalid Register"
+                return false
+
+            }
+
+            operand_two = this.addressing_mode(instruction[2])
+
+            if (operand_two == false) {
+
+                return false
+
+            }
+
+            result_location = instruction[0].toUpperCase()
+
+            if (!(result_location in this.registers)) {
+
+                this.registers['Error'] = "Invalid Register"
+                return false
+
+            }
 
         }
 
         if (opcode == "B" | opcode == 'BEQ' | opcode == 'BLT' | opcode == 'BNE' | opcode == 'BGT') {
 
-            operand_one = instruction[1] + ":"
+            operand_one = instruction[0] + ":"
+
+            if (!(operand_one in this.labels)) {
+
+                this.registers['Error'] = 'Invalid Jump Label'
+                return false
+
+            }
 
         }
 
@@ -407,7 +581,7 @@ function refresh_registers() {
 
     var keys = Object.keys(register_data)
 
-    len = keys.length
+    len = keys.length - 4
     x = 0
 
     if (!cold_start) {
@@ -438,8 +612,53 @@ function refresh_registers() {
 
             var row = table.rows[x]
             var data = row.cells[1]
-            
+
             data.innerHTML = register_data[keys[x - 1]]
+
+        }
+
+    }
+
+}
+
+function refresh_program_data() {
+
+    var table = document.getElementById("program_table");
+    var register_data = vm.return_registers();
+
+    var keys = Object.keys(register_data)
+
+    len = keys.length
+    x = 16
+
+    if (!cold_start) {
+
+        table = document.querySelector("#program_table tbody")
+
+    }
+
+    for (x; x < len;  x ++) {
+
+
+        if (cold_start) {
+
+            var row = table.insertRow(-1)   
+            var address = row.insertCell(0)
+            var data = row.insertCell(1)
+
+            data.classList.add('data-value')
+            address.innerHTML = keys[x]
+            data.innerHTML = register_data[keys[x]]
+
+        }
+
+        else {
+
+
+            var row = table.rows[x - 16]
+            var data = row.cells[1]
+
+            data.innerHTML = register_data[keys[x]]
 
         }
 
@@ -471,18 +690,19 @@ function refresh_memory() {
             var row = table.insertRow(-1)   
             var address = row.insertCell(0)
             var data = row.insertCell(1)
+            var address_num = Number(keys[x])
+
             data.classList.add('data-value')
-            address.innerHTML = keys[x]
+            address.innerHTML = address_num
             data.innerHTML = memory_data[keys[x]]
 
         }
 
         else {
 
-            console.log("a")
             var row = table.rows[x]
             var data = row.cells[1]
-            
+        
             data.innerHTML = memory_data[keys[x - 1]]
 
         }
@@ -502,19 +722,14 @@ function refresh_memory() {
 function parse_program(raw_program) {
 
     raw_program = raw_program.split("\n")
-    raw_program = raw_program.filter(item => item !== "" && item !== null && item !== undefined);
-    
+
     for (var x = 0; x < raw_program.length; x++) {
 
         raw_program[x] = raw_program[x].trim()
 
     }
-
-    if (!(raw_program.includes("HALT"))) {
-
-        return [1, raw_program]
-
-    }
+    
+    raw_program = raw_program.filter(item => item !== "" && item !== null && item !== undefined && item[0] !== ";");
 
     return [0, raw_program]
 
@@ -531,13 +746,11 @@ function execute() {
         case 0:
             vm.refresh_values()
             vm.execute_program(program)
-            refresh_memory()
+
             refresh_registers()
+            refresh_program_data()
+            refresh_memory()
             return
-
-
-        case 1:
-            console.log("MUST IMPLEMENT NO HALT ERROR")
 
     }
     
