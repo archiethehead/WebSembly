@@ -110,7 +110,9 @@ class virtual_machine {
 
         // Parsed instruction is ALWAYS returned in the
         // format 'opcode, operand_one, operand_two,
-        // result_location.'
+        // result_location.' If an error is found during
+        // parsing, the instruction is assigned a Boolean
+        // value of false.
 
         instruction = this.parse_instruction(instruction)
 
@@ -185,7 +187,6 @@ class virtual_machine {
     addressing_mode(variable) {
 
         var base = 10
-        console.log(variable)
 
         if (variable.slice(0, 2).toLowerCase() == '0x') {
 
@@ -241,7 +242,6 @@ class virtual_machine {
 
             if (!(variable.toUpperCase() in this.registers)) {
 
-                console.log("a")
                 this.registers['Error'] = 'Invalid Register'
                 return false
 
@@ -458,7 +458,7 @@ class virtual_machine {
         var opcode = instruction.substring(0, instruction.indexOf(' '))
         var instruction = instruction.substring(instruction.indexOf(' ') + 1)
 
-        if (!(opcode.toUpperCase() in this.opcodes)) {
+        if (!(opcode.toUpperCase() in this.opcodes) | opcode == "") {
 
             this.registers['LR'] = ''
             this.registers['CI'] = opcode
@@ -654,7 +654,6 @@ function refresh_program_data() {
 
         else {
 
-
             var row = table.rows[x - 16]
             var data = row.cells[1]
 
@@ -731,28 +730,82 @@ function parse_program(raw_program) {
     
     raw_program = raw_program.filter(item => item !== "" && item !== null && item !== undefined && item[0] !== ";");
 
-    return [0, raw_program]
+    return raw_program
 
 }
 
 function execute() {
 
-    var results = parse_program(document.getElementById("code_text_area").value)
-    var exit_code = results[0]
-    var program = results[1]
+    var program = parse_program(document.getElementById("code_text_area").value)
+    if (program.length == 0) {
 
-    switch (exit_code) {
-
-        case 0:
-            vm.refresh_values()
-            vm.execute_program(program)
-
-            refresh_registers()
-            refresh_program_data()
-            refresh_memory()
-            return
+        return
 
     }
-    
+
+    vm.refresh_values()
+    vm.execute_program(program)
+
+    refresh_registers()
+    refresh_program_data()
+    refresh_memory()
+
+    vm.refresh_values()
+
+}
+
+function execute_step() {
+
+    data = document.getElementById("code_text_area").value
+    if (data.trim() == "") {
+
+        return
+
+    }
+
+    var program = parse_program(data)
+        
+    if (vm.registers['PC'] == program.length | vm.registers['Error'] != '' | vm.registers['PC'] == 0) {
+        
+        vm.refresh_values()
+        vm.registers['PC'] = 0
+
+        for (let i = 0; i < program.length; i ++){
+
+            if (program[i].endsWith(':')) {
+
+                vm.labels[program[i]] = i
+
+            }
+
+        }
+
+    }
+
+    vm.execute_instruction(program[vm.registers['PC']])
+
+    if (program[vm.registers['PC']].toUpperCase() == 'HALT') {
+
+            vm.registers['CI'] = 'HALT'
+            vm.registers['Next Opcode'] = ''
+            vm.registers['LR'] = ''
+
+        }
+
+    refresh_registers()
+    refresh_program_data()
+    refresh_memory()
+
+    vm.registers['PC'] += 1
+
+}
+
+function clear_data() {
+
+    document.getElementById("code_text_area").value = ""
+    vm.refresh_values()
+    refresh_registers()
+    refresh_program_data()
+    refresh_memory()
 
 }
