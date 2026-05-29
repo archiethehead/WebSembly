@@ -37,7 +37,15 @@
         <div class = "grid-container">
             
             <div class = "code-area">
-                <textarea class = "code-text-area" placeholder="Enter code here . . ." id = "code_text_area"></textarea>
+                <textarea class = "code-text-area" placeholder="Enter code here . . ." id = "code_text_area"
+                onkeydown="if(event.keyCode===9){
+                    var v=this.value,
+                    s=this.selectionStart,
+                    e=this.selectionEnd;
+                    this.value=v.substring(0, s) + '    ' + v.substring(e);
+                    this.selectionStart=this.selectionEnd=s+4;
+                    return false;
+                    }"></textarea>
             </div>
 
             <div class = "table-area">

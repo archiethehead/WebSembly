@@ -100,10 +100,11 @@ class virtual_machine {
 
 
         // Lables and exit commands shouldn't be executed
-        // and can be skipped with a lookup and condition.
-        
+        // and can be skipped with a lookup and condition
+
         if (instruction in this.labels || instruction.toUpperCase() == "HALT") {
 
+            this.registers['LR'] = ""
             return
 
         }
@@ -153,12 +154,15 @@ class virtual_machine {
 
             if (this.registers['PC'] == program.length) {
                 
-                break
+                break   
 
             }
+            
 
             this.current_instruction = program[this.registers['PC']]
+            
             var error = this.execute_instruction(this.current_instruction)
+
 
             if (error) {
 
@@ -173,7 +177,6 @@ class virtual_machine {
         if (this.current_instruction.toUpperCase() == 'HALT') {
 
             this.registers['CI'] = 'HALT'
-            this.registers['Next Opcode'] = ''
             this.registers['LR'] = ''
 
         }
@@ -202,7 +205,6 @@ class virtual_machine {
 
         if (variable[0] == '#') {
 
-
             var result = 0
 
             if (base == 16) {
@@ -220,14 +222,36 @@ class virtual_machine {
 
             else {
 
-                result = Number(variable.slice(1))
+                if ((variable.slice(0, 2) == '#0')) {
+
+                    result = 0
+
+                }
+
+                else {
+                    
+                    result = Number(variable.slice(1))
+
+                }
 
             }
             
             if (result == NaN) {
-
+                
                 this.registers['Error'] = 'Invalid Number'
                 return false
+
+            }
+
+            if (result > Number.MAX_SAFE_INTEGER) {
+
+                result = 9007199254740990
+
+            }
+
+            if (result < Number.MIN_SAFE_INTEGER) {
+
+                result = -9007199254740991
 
             }
 
@@ -295,6 +319,7 @@ class virtual_machine {
     // value 'y,' storing them in the cmp cache.
     cmp(x, y, r) {
 
+        this.registers['LR'] = ""
         this.cmp_vals = [this.registers[r], y]
 
     }
@@ -302,6 +327,7 @@ class virtual_machine {
     // Branch to 'x' Label
     branch(x, y, r) {
 
+        this.registers["LR"] = ""
         this.registers["PC"] = this.labels[x]
 
     }
@@ -312,7 +338,7 @@ class virtual_machine {
 
         if (this.cmp_vals[0] == this.cmp_vals[1]) {
 
-            branch(x, y, r)
+            this.branch(x, y, r)
 
         }
 
@@ -324,7 +350,7 @@ class virtual_machine {
 
         if (this.cmp_vals[0] < this.cmp_vals[1]) {
 
-            branch(x, y, r)
+            this.branch(x, y, r)
 
         }
 
@@ -336,7 +362,7 @@ class virtual_machine {
 
         if (this.cmp_vals[0] > this.cmp_vals[1]) {
 
-            branch(x, y, r)
+            this.branch(x, y, r)
 
         }
 
@@ -490,7 +516,7 @@ class virtual_machine {
 
             operand_two = this.addressing_mode(instruction[1])
 
-            if (operand_two == false) {
+            if (operand_two === false) { 
 
                 return false
 
@@ -503,7 +529,7 @@ class virtual_machine {
         if (opcode == 'LDR' | opcode == 'STR') {
 
             operand_one = instruction[0].toUpperCase()
-            operand_two = instruction[1].toUpperCase()
+            operand_two = this.addressing_mode(instruction[1])
 
             if (!(operand_one in this.registers)) {
 
@@ -512,14 +538,14 @@ class virtual_machine {
 
             }
 
-            if (!(operand_two in this.registers)) {
+            if (!(Number(operand_two) in this.global_memory)) {
 
                 this.registers['Error'] = "Invalid Memory"
                 return false
 
             }
 
-            result_location = operand_one.toUpperCase()  
+            result_location = operand_one.toUpperCase()
 
         }
 
@@ -536,7 +562,7 @@ class virtual_machine {
 
             operand_two = this.addressing_mode(instruction[2])
 
-            if (operand_two == false) {
+            if (operand_two === false) {
 
                 return false
 
@@ -654,6 +680,12 @@ function refresh_program_data() {
 
         else {
 
+            if (x === 20) {
+
+                continue
+
+            }
+
             var row = table.rows[x - 16]
             var data = row.cells[1]
 
@@ -678,7 +710,7 @@ function refresh_memory() {
 
         table = document.querySelector("#memory_table tbody")
         x += 1
-        len -= 1
+        len += 1
 
     }
 
@@ -765,7 +797,7 @@ function execute_step() {
 
     var program = parse_program(data)
         
-    if (vm.registers['PC'] == program.length | vm.registers['Error'] != '' | vm.registers['PC'] == 0) {
+    if (vm.registers['PC'] == program.length || vm.registers['Error'] != '' || vm.registers['PC'] == 0) {
         
         vm.refresh_values()
         vm.registers['PC'] = 0
@@ -782,12 +814,17 @@ function execute_step() {
 
     }
 
+    if (program[vm.registers['PC']].endsWith(':')) {
+
+         vm.registers['CI'] = program[vm.registers['PC']]
+        
+    }
+
     vm.execute_instruction(program[vm.registers['PC']])
 
     if (program[vm.registers['PC']].toUpperCase() == 'HALT') {
 
             vm.registers['CI'] = 'HALT'
-            vm.registers['Next Opcode'] = ''
             vm.registers['LR'] = ''
 
         }
