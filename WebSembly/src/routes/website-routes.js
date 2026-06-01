@@ -16,4 +16,10 @@ website_router.get('/InstructionSet', (req, res) => {
 
 });
 
+website_router.get('/InstructionSet', (req, res) => {
+
+    res.sendFile(path.join(__dirname, '/../../public/Instruction-Set.pdf'));
+
+});
+
 module.exports = website_router;

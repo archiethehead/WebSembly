@@ -3,42 +3,38 @@ const schema = mongoose.Schema;
 
 const user = new schema({
 
-    "users": {
+    name: {
 
-        user_name: {
+    type: String,
+    unique: true,
+    maxlength: 15,
+    minlength: 3,
+    required: true
+
+    },
+
+    email: {
 
         type: String,
-        maxlength: 15,
-        minlength: 3,
+        unique: true,
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         required: true
 
-        },
+    },
 
-        email_address: {
+    password: {
 
-            type: String,
-            unique: true,
-            match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-            required: true
+        type: String,
+        minlength: 5,
+        maxlength: 30,
+        required: true
 
-        },
+    },
 
-        password: {
+    programs: {
 
-            type: String,
-            select: false,
-            minlength: 5,
-            maxlength: 30,
-            required: true
-
-        },
-
-        programs: {
-
-        type: Map,
-        of: String
-
-        }
+    type: Map,
+    of: String
 
     }
 

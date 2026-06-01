@@ -8,6 +8,8 @@ const database = require("./../controllers/mongo_db")
 // database_router.get('/programs/:userID');
 
 database_router.get('/examplePrograms', database.get_example_programs);
+database_router.post('/user/login/:emailAddress', database.get_user_by_email);
+database_router.post('/user/create', database.create_user);
 
 // database_router.post('/user');
 // database_router.post('/program/:userID');
