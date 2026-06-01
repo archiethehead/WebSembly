@@ -3,7 +3,7 @@ const schema = mongoose.Schema;
 
 const example_programs = new schema({
 
-    "example programs": {
+    "example program": {
 
         type: Map,
         of: String

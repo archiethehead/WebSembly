@@ -209,13 +209,34 @@ td {
     z-index: 1000;
 }
 
-.modal-content {
+.modal-content, .load-program-content {
     background: #4c5844;
     border: 2px solid #d6ec00;
     height:max-content;
     padding: 20px;
     width: 400px;
     color: white;
+}
+
+.load-program-content {
+
+  display: flex;
+  flex-direction: row;
+
+}
+
+.load-program-list {
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 10px;
+  flex-grow: 1;
+  scrollbar-width: thin;
+  scrollbar-color: #d6ec00 #4c5844;
+
 }
 
 .modal-content input {
@@ -235,12 +256,18 @@ td {
 
 }
 
-.modal-error-message {
+.modal-error-message, .online-text {
 
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.5 rem;
   color: red;
 
+
+}
+
+.online-text {
+
+  color: white;
 
 }
 

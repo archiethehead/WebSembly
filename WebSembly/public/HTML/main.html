@@ -21,6 +21,7 @@
                 <input type="text" id="email" placeholder="Email Address">
                 <input type="password" id="password" placeholder="Password">
                 <input type="password" id="confirm_password" placeholder="Confirm Password" style="display:none;">
+                <button onclick="sign_out()" class = "control-bar-button" id = "auth_sign_out_button", style = "display:none">Sign Out</button>
                 <button onclick="handle_auth()" class = "control-bar-button" id = "auth_submit_button">Submit</button>
                 <button onclick="close_modal('auth_modal')" class = "control-bar-button">Cancel</button>
                 <p onclick="toggle_auth_mode()" style="cursor:pointer" class = "modal-text" id = "auth_toggle_link">Need an account? Sign up.</p>
@@ -31,10 +32,21 @@
 
         <div id="load_modal" class="modal-overlay" style="display:none;">
 
-            <div class="modal-content">
+            <div class="load-program-content">
                 <h2 class = "modal-title">YOUR SAVED PROGRAMS</h2>
-                <div id="program_list"></div>
+                <div id="program_list" class = "load-program-list"></div>
                 <button onclick="close_modal('load_modal')" class = "control-bar-button">Close</button>
+            </div>
+
+        </div>
+
+        <div id="save_modal" class="modal-overlay" style="display:none;">
+
+            <div class="modal-content">
+                <h2 class = "modal-title">SAVE YOUR PROGRAM</h2>
+                <input id="program_name" placeholder="Program Name">
+                <button onclick="save_program();" class = "control-bar-button">Save</button>
+                <button onclick="close_modal('save_modal')" class = "control-bar-button">Close</button>
             </div>
 
         </div>
@@ -44,9 +56,10 @@
             <div class = "control-bar-button-area">
                 <button class = "control-bar-button" onclick = "execute();">RUN PROGRAM</button>
                 <button class = "control-bar-button" onclick = "execute_step();">RUN STEP</button>
-                <button class = "control-bar-button" onclick = "clear_data();">CLEAR</button>
-                <button class = "control-bar-button">SAVE</button>
-                <button class = "control-bar-button" onclick = "open_modal('load_modal');">LOAD</button>
+                <button class = "control-bar-button" onclick = "clear_data(); current_program_data = null;">NEW PROGRAM</button>
+                <button class = "control-bar-button" onclick = "save_user_program();">SAVE</button>
+                <button class = "control-bar-button" onclick = "get_user_programs();">LOAD</button>
+                <button class = "control-bar-button" onclick = "delete_user_program();">DELETE</button>
             </div>
 
             <div class = "control-bar-button-area">
@@ -138,6 +151,15 @@
             <div style = "height:min-content">
                 <span class="icon">⚠️</span>
                 <p class = "modal-error-message">You are currently offline.</p>
+            </div>
+            
+        </div>
+
+        <div id="online-notification" class="offline-notification" style="display:none;">
+
+            <div style = "height:min-content">
+                <span class="icon">✅</span>
+                <p class = "online-text">Connected to the server.</p>
             </div>
             
         </div>

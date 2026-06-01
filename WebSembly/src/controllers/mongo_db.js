@@ -23,7 +23,7 @@ exports.get_example_programs = (req, res, next) => {
         .then(found_results => {
             
             debug(chalk.cyan("RETURNING DATA: ", found_results))
-            res.status(200).json({examples : found_results})
+            res.status(200).json({found_results})
 
         })
 
@@ -119,5 +119,90 @@ exports.create_user = async (req, res, next) => {
         }
 
     }
+
+}
+
+exports.get_user_programs = (req, res) => {
+
+    const email_address = req.params.emailAddress;
+
+    user.findOne({ email: email_address })
+        .select('programs') 
+        .then(found_user => {
+
+            if (!found_user) {
+
+                return res.status(404).json({ error: "User not found" });
+
+            }
+
+            debug(chalk.cyan(`FETCHING PROGRAMS FOR: ${email_address}`));
+            res.status(200).json(found_user.programs);
+
+        })
+        .catch(err => {
+            debug(chalk.red("ERROR:", err));
+            res.status(500).json({ error: "Could not retrieve programs :(" });
+        });
+
+};
+
+exports.delete_program = (req, res) => {
+
+    const email_address = req.body.email;
+    const program_name = req.params.programName;
+    const update = {}
+    update[`programs.${program_name}`] = "";
+
+    user.findOneAndUpdate(
+        {email: email_address},
+        {$unset : update},
+        { new : true}
+
+    )
+    .then(found_user => {
+
+        if (!found_user) {
+
+            return res.status(404).json({ error: "User not found :(s" });
+
+        } 
+
+        debug(chalk.red(`DELETED PROGRAM: ${program_name} FOR USER: ${email_address}`));
+        res.status(200).json({ message : "Program deleted successfully."})
+
+    })
+    .catch(err => {
+
+        debug(chalk.red("ERROR:", err));
+        res.status(500).json({ error: "Could not delete program :(" });
+
+    })
+
+}
+
+exports.save_program = (req, res) => {
+
+    const email_address = req.params.emailAddress;
+    const program_name = req.body.name;
+    const program_code = req.body.code;
+
+    const update = {}
+    update[`programs.${program_name}`] = program_code;
+
+    user.findOneAndUpdate(
+
+        {email: email_address},
+        {$set : update},
+        { new : true, upsert : true }
+
+    )
+    .then(found_user => {
+
+        debug(chalk.green(`SAVED PROGRAM: ${program_name} FOR USER: ${email_address}`));
+        res.status(200).json({ message : "PROGRAM SAVED SUCCESSFULLY."})
+
+    })
+
 
 }

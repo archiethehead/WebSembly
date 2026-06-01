@@ -33,8 +33,8 @@ const user = new schema({
 
     programs: {
 
-    type: Map,
-    of: String
+        type: Map,
+        of: String
 
     }
 
