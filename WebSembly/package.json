@@ -1,7 +1,7 @@
 {
   "name": "websembly",
   "version": "1.0.0",
-  "description": "Node and Express JS package for content management with Azure, utilising a polyglot persistence model for storing and retrieving user data in the form of a relational (SQL) databse for sensitive user data and story metadata, and document store (JSON) database for program instructional data.",
+  "description": "Node and Express JS package for content management with Azure, utilising a NoSQL Microsoft CosmosDB solution for storing all website data (user, program, session) in a json package.",
   "homepage": "https://github.com/archiethehead/WebSembly#readme",
   "bugs": {
     "url": "https://github.com/archiethehead/WebSembly/issues"
@@ -20,7 +20,9 @@
   "dependencies": {
     "chalk": "^4.1.2",
     "debug": "^4.4.3",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "mongoose": "^9.6.3",
     "morgan": "^1.10.1"
   }
 }

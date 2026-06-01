@@ -2,7 +2,7 @@
 
 start http://localhost:8080
 set DEBUG=app
-node index.js
+node server.js
 
 :: If node encounters an error during startup or
 :: execution, this input prompt allows you to

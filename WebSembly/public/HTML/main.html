@@ -5,6 +5,7 @@
 
         <title>WebSembly</title>
         <script src = "../JS/virtual_machine.js"></script>
+        <script src = "../JS/client.js"></script>
         <link rel = "stylesheet" href = "../CSS/style.css">
         <style>@import url('https://fonts.cdnfonts.com/css/perfect-dos-vga-437');</style>
 
@@ -27,8 +28,8 @@
             </div>
 
             <div class = "control-bar-button-area">
-                <button class = "control-bar-button">EXAMPLE PROGRAMS</button>
-                <button class = "control-bar-button">INSTRUCTION SET</button>
+                <button class = "control-bar-button" onclick = "get_example_programs();">EXAMPLE PROGRAMS</button>
+                <button class = "control-bar-button" onclick = "document.location = 'InstructionSet'">INSTRUCTION SET</button>
                 <button class = "control-bar-button">PROFILE</button>
             </div>
 
@@ -37,7 +38,8 @@
         <div class = "grid-container">
             
             <div class = "code-area">
-                <textarea class = "code-text-area" placeholder="Enter code here . . ." id = "code_text_area"
+                <textarea 
+                class = "code-text-area" placeholder="Enter code here . . ." id = "code_text_area"
                 onkeydown="if(event.keyCode===9){
                     var v=this.value,
                     s=this.selectionStart,

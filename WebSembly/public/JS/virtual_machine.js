@@ -187,7 +187,7 @@ class virtual_machine {
 
     }
 
-    addressing_mode(variable) {
+    addressing_mode(variable, memory = false) {
 
         var base = 10
 
@@ -279,7 +279,7 @@ class virtual_machine {
         // the absence of any prepending labels (R, #) indicates memory
         // addressing.
 
-        else if (variable[0] != 'R' & variable[0] != '#') {
+        else if (variable[0] != 'R' && variable[0] != '#') {
 
             if (!(variable in this.global_memory)) {
 
@@ -288,7 +288,17 @@ class virtual_machine {
 
             }
 
-            return this.global_memory[Number(variable)]
+            if (memory) {
+
+                return variable
+
+            }
+
+            else {
+
+                return this.global_memory[Number(variable)]
+
+            }
 
         }
 
@@ -389,7 +399,7 @@ class virtual_machine {
 
     // Store value in register 'r' in memorys
     // location 'y.'
-    str(x, y, r) {
+    str(x, y, r) {  
 
         this.global_memory[y] = this.registers[r]
 
@@ -455,6 +465,7 @@ class virtual_machine {
         this.registers[r] = this.registers[x]
         for (let i = 0; i < y; i++) {
 
+            console.log(this.registers[r])
             this.registers[r] = Number(this.registers[r] * 2)
 
         }
@@ -529,7 +540,7 @@ class virtual_machine {
         if (opcode == 'LDR' | opcode == 'STR') {
 
             operand_one = instruction[0].toUpperCase()
-            operand_two = this.addressing_mode(instruction[1])
+            operand_two = this.addressing_mode(instruction[1], true)
 
             if (!(operand_one in this.registers)) {
 
