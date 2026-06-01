@@ -52,7 +52,6 @@ td {
 
 /* Control Bar */
 
-
 .control-bar {
 
   flex-direction: row;
@@ -284,4 +283,190 @@ td {
     box-shadow: 0 4px 15px black(0,0,0,0.3);
     z-index: 9999;
     transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+@media (max-width: 1023px) {
+
+  input {
+
+  font-size: 2rem;
+
+  }
+
+
+  caption, th, td, .modal-text, .control-bar-button, .code-text-area {
+
+    font-size: 2rem;
+    
+  }
+
+  .control-bar-title {
+
+    font-size: 2rem;
+
+  }
+
+
+  .control-bar {
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap;
+  width: 100vw;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  
+  }
+
+  .control-bar-button-area {
+
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+
+  }
+
+  .control-bar-title {
+
+    flex-shrink: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+
+  }
+
+  .control-bar-button {
+
+    flex-shrink: 0;
+    white-space: nowrap;
+
+  }
+
+  .grid-container {
+
+    display: block;
+
+  }
+
+  .code-area {
+
+    width: 100vw;
+    height: 95vh;
+
+  }
+
+  .code-text-area {
+
+    width: 100%;
+
+  }
+
+  .table-area {
+
+    position: fixed;
+    top: 5vh;
+    right: -90vw;
+    width: 90vw;
+    height: 95vh;
+    background: #2b3929;
+    z-index: 500;
+    transition: right 0.25s ease;
+
+  }
+
+  .table-area.open {
+
+    right: 0;
+    
+  }
+
+  .register-table-area {
+
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 100%;
+
+  }
+
+  .memory-table-area {
+
+    width: 50%;
+    height: 100%;
+
+  }
+
+  .register-table, .memory-table {
+
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+    scrollbar-width: thin;
+
+  }
+
+  .table-handle {
+
+    position: absolute;
+    left: -50px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    border-right: none;
+    background: #4c5844;
+    color: #d6ec00;
+    font-size: 2rem;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+
+  }
+
+   .table-handle:active {
+
+        background: #5d6b54;
+
+    }
+
+  caption, th {
+    
+    top: 0%;
+    font-size: 1.5rem;
+
+  }
+
+  td {
+
+    min-width: 90px;
+
+  }
+
+  .modal-content, .load-program-content {
+
+    width: 95vw;
+    max-width: none;
+
+  }
+
+  .code-text-area {
+
+    font-size: 3rem;
+
+  }
+
+  .control-bar-button {
+
+    font-size: 2rem;
+
+  }
+
+  .control-bar-title {
+
+    font-size: 0rem;
+
+  }
+
 }

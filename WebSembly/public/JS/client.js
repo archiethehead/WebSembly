@@ -313,7 +313,7 @@ function sign_out() {
 
     user_data = null;
     is_sign_up = 1;
-    
+
     const email_input = document.getElementById("email");
     const password_input = document.getElementById("password");
     const submit_button = document.getElementById("auth_submit_button");
@@ -527,3 +527,18 @@ function get_instruction_set() {
 
 }
 start_ping();
+
+window.addEventListener('DOMContentLoaded', () => {
+
+    const tableArea = document.getElementById('table_area');
+    const handle = document.getElementById('table_handle');
+
+    if (!tableArea || !handle) return;
+
+    handle.addEventListener('click', () => {
+
+        tableArea.classList.toggle('open');
+        
+    });
+
+});
